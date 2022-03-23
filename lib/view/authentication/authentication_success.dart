@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo/postauthentication/persistent_bottom_navigation_bar.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../constants/constants.dart';
+import '/../constants/constants.dart';
 
 class AuthenticationSuccess extends StatefulWidget {
   const AuthenticationSuccess({Key? key}) : super(key: key);

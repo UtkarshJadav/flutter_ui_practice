@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/authentication/otp_screen.dart';
+import '../authentication/otp_screen.dart';
 import 'package:flutter_demo/constants/constants.dart';
 import 'package:flutter_svg/svg.dart';
 

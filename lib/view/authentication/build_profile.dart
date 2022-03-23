@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/authentication/setup_orchard.dart';
-import '../constants/constants.dart';
+
+import '../authentication/setup_orchard.dart';
+import '/../constants/constants.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../reusable_widgets/edittext_with_label_and_icon.dart';
+import '/../reusable_widgets/edittext_with_label_and_icon.dart';
 
 class BuildProfile extends StatefulWidget {
   const BuildProfile({Key? key}) : super(key: key);

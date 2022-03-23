@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_demo/authentication/walk_through_screen.dart';
 
-import 'authentication/login_screen.dart';
+import 'package:flutter_demo/utils/helpers/api_provider.dart';
+import 'package:flutter_demo/view/authentication/walk_through_screen.dart';
+import 'package:load/load.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_demo/utils/helpers/shared_pref_helper.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  runApp(const MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
+
+final apiProvider = Provider((ref)=> APIProvider(ref.read));
+final prefProvider = Provider((ref)=> SharedPref());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -22,7 +28,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: LoadingProvider( themeData: LoadingThemeData(),child : MyHomePage(title: 'Flutter Demo Home Page')) ,
     );
   }
 }
@@ -69,3 +75,5 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/authentication/login_screen.dart';
+import '../authentication/login_screen.dart';
 import 'package:flutter_demo/models/walk_thorough_model.dart';
-import '../constants/constants.dart';
+import '/../constants/constants.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 
 class WalkThroughScreen extends StatefulWidget {

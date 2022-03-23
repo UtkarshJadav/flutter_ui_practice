@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/authentication/build_profile.dart';
+import '../authentication/build_profile.dart';
 import 'package:flutter_svg/svg.dart';
-import '../constants/constants.dart';
+import '/../constants/constants.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OTPScreen extends StatefulWidget {
