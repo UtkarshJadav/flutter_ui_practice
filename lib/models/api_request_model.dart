@@ -1,8 +1,13 @@
+import 'package:dio/dio.dart';
+
 class ApiRequest {
   final int? id;
   final String? firstName;
   final String? lastName;
   final String? email;
+  final String? birthDate;
+  final String? method;
+  final MultipartFile? photo;
   final String? password;
   final String? deviceType;
   final String? deviceToken;
@@ -20,6 +25,9 @@ class ApiRequest {
     this.firstName,
     this.lastName,
     this.email,
+    this.birthDate,
+    this.method,
+    this.photo,
     this.password,
     this.deviceType,
     this.deviceToken,
@@ -38,6 +46,9 @@ class ApiRequest {
         firstName = json['first_name'] as String?,
         lastName = json['last_name'] as String?,
         email = json['email'] as String?,
+        birthDate = json['birthdate'] as String?,
+        method = json['method'] as String?,
+        photo = json['photo'] as MultipartFile?,
         password = json['password'] as String?,
         deviceType = json['device_type'] as String?,
         deviceToken = json['device_token'] as String?,
@@ -55,9 +66,12 @@ class ApiRequest {
     'first_name' : firstName,
     'last_name' : lastName,
     'email' : email,
+    'photo' : photo,
+    '_method' : method,
     'password' : password,
     'device_type' : deviceType,
     'device_token' : deviceToken,
+    'birthdate' : birthDate,
     'session_id' : sessionId,
     'orchardName' : orchardName,
     'location' : location,

@@ -1,21 +1,25 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
+
 import 'package:flutter_demo/models/api_request_model.dart';
 import 'package:flutter_demo/models/profile_response.dart';
 import 'package:flutter_demo/utils/helpers/shared_pref_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:load/load.dart';
-
+import 'package:image_picker/image_picker.dart';
 import '../main.dart';
-import '../models/login_response_model.dart';
-import '../models/results.dart';
 import '../utils/common/constants.dart';
 
 final isLoggedIn = StateProvider<bool>((ref) {
   return false;
 });
+
 final authToken = StateProvider<String>((ref) {
+  return '';
+});
+final profilePic = StateProvider.autoDispose<XFile?>((ref) {
+  return null;
+});
+final profileError = StateProvider.autoDispose<dynamic>((ref) {
   return '';
 });
 final currUser = StateProvider<ProfileModel>((ref) {
@@ -28,7 +32,9 @@ final loginProvider =
 class LoginController extends StateNotifier<void> {
   LoginController() : super(0);
 
-  loginUser(Reader read, String mobilenumber) async {
+  loginUser(Reader read, String mobilenumber,{required Function onSuccess,required Function onError}) async {
+
+
     showLoadingDialog();
 
     await read(apiProvider)
@@ -40,29 +46,25 @@ class LoginController extends StateNotifier<void> {
                     deviceToken: 'token123token123token123')
                 .toJson())
         .then((Response<dynamic> res) {
-      var result = Results(create: () => LoginResponse()).fromJson(jsonDecode(res.data));
-      print(result.data?.sessionId ?? '');
-      hideLoadingDialog();
-      read(prefProvider)
-          .set(SharedPref.sessionId, result.data?.sessionId ?? '');
-      return result.data?.sessionId;
+          hideLoadingDialog();
+         onSuccess(res);
     }).catchError((dynamic err) {
+
       hideLoadingDialog();
-      err.hashCode.toString();
+      onError(err);
     });
-    /*await Future.delayed(Duration(seconds: 2));
-    print(mobilenumber);
-*/
-    hideLoadingDialog();
-    // bfc526be-1cef-473d-9b36-2b0bdf72c244
+
   }
 
-  verfyOtp(Reader read, String mobileNumber, String otp) async {
+  verifyOtp(Reader read, String mobileNumber, String otp,{required Function onSuccess,required Function onError}) async {
     showLoadingDialog();
     String? sessionid;
+
     read(prefProvider)
         .getString(SharedPref.sessionId)
         .then((value) => sessionid = value);
+
+
     read(apiProvider)
         .postAPICall(
             APIConstant.verifyOtp,
@@ -74,12 +76,7 @@ class LoginController extends StateNotifier<void> {
                     sessionId: sessionid)
                 .toJson())
         .then((Response<dynamic> res) {
-       var result = Results(create: () => ProfileModel()).fromJson(jsonDecode(res.data));
-        print(result.extraMeta?.token ?? '');
-        print(result.data?.email ?? '');
-
-       read(prefProvider).setToken(result.extraMeta?.token ?? '');
-        read(prefProvider).setUser(result.data?.toJson().toString() ?? '');
+      onSuccess(res);
       hideLoadingDialog();
     }).catchError((dynamic err) {
       hideLoadingDialog();
@@ -89,4 +86,44 @@ class LoginController extends StateNotifier<void> {
 
     hideLoadingDialog();
   }
+
+
+  buildProfile(Reader read, String firstName, String lastName,String email,String dob,{required Function onSuccess,required Function onError}) async {
+    showLoadingDialog();
+
+    ProfileModel? userData;
+
+   await read(prefProvider)
+         .getCurrUser()
+        .then((value) =>
+   userData = value
+   );
+   await read(apiProvider)
+        .formDataQueryPostAPICall(
+        APIConstant.userInformation,
+        ApiRequest(
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+           birthDate : dob,
+           method : "PUT",
+            photo:  await MultipartFile.fromFile(read(profilePic.state).state?.path ?? "",filename: read(profilePic.state).state?.name ),
+        ).toJson(),
+         userData?.id,
+    )
+       .then((Response<dynamic> res) {
+      onSuccess(res);
+      hideLoadingDialog();
+    }).catchError((dynamic err) {
+      hideLoadingDialog();
+      var error = err as DioError;
+      print(error.response);
+    });
+
+    hideLoadingDialog();
+  }
+
+
+
+
 }

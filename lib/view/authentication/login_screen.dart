@@ -1,22 +1,30 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import '../../main.dart';
+import '../../models/login_response_model.dart';
+import '../../models/results.dart';
+import '../../state/login_provider.dart';
+import '../../utils/helpers/shared_pref_helper.dart';
 import '../authentication/otp_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_demo/constants/constants.dart';
 import 'package:flutter_svg/svg.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
 
-class _LoginScreenState extends State<LoginScreen> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,ref) {
+
+    TextEditingController controller = TextEditingController();
+    ref.read(prefProvider).set(SharedPref.walkThroughVisited, true);
     return Scaffold(
       backgroundColor: colorNavyBlue,
       body: Stack(
         children: [
+
           SizedBox(
             width: double.infinity,
             child: SafeArea(
@@ -81,15 +89,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(22, 12, 22, 0),
                     child: TextField(
+                      controller: controller,
                       maxLength: 10,
                       cursorColor: colorNavyBlue,
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.w600),
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
-                        prefixText: '+91 ',
-                        prefixStyle: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w600),
+                        prefixIcon:Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0,horizontal: 10),
+                          child: Text("+91",style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w600),),
+                        ),
+
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
                           borderSide: const BorderSide(color: Colors.grey),
@@ -140,12 +152,24 @@ class _LoginScreenState extends State<LoginScreen> {
                         const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const OTPScreen(),
-                          ),
-                        );
+                           ref.read(loginProvider.notifier).loginUser(ref.read,"+91"+controller.text,
+                            onSuccess : (res){
+                              var result = Results(create: () => LoginResponse()).fromJson(jsonDecode(res.data));
+                              print(result.data?.sessionId ?? '');
+                              ref.read(prefProvider)
+                                  .set(SharedPref.sessionId, result.data?.sessionId ?? '');
+                              ref.read(prefProvider)
+                                  .set(SharedPref.sessionId,'bfc526be-1cef-473d-9b36-2b0bdf72c244');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OTPScreen(mobileNumber : controller.text),
+                                ),
+                              );
+                        },
+                        onError: (error){
+                          print(error);
+                        });
                       },
                       child: Container(
                         width: double.infinity,

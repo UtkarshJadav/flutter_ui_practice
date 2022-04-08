@@ -104,6 +104,8 @@ class LottieConstants {
 }
 
 class APIConstant {
+
+
   static RequestKeys requestKeys = const RequestKeys();
 
   static String register = 'oauth/register';
@@ -113,7 +115,7 @@ class APIConstant {
   static String forgotPassword = 'forgotPassword';
   static String changePassword = 'changePassword';
   static String editUserProfile = 'editUserProfile';
-  static String getUserInformation = 'users';
+  static String userInformation = 'users/';
   static String getMainModules = 'activities/activity';
   static String getOrchardAges = 'orchards/ages';
   static String getOrchardYields = 'orchards/yields';
@@ -206,6 +208,11 @@ class RequestKeys {
   String get productDetails => 'productDetails';
   String get sku => 'SKU';
   String get description => 'description';
+
+}
+
+class RegexConstants{
+  static String emailValidator = r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
 }
 
 

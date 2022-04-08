@@ -3,10 +3,9 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/profile_response.dart';
 
-
 class SharedPref {
   //Keys
-  static String isLoogedIn = 'isLoogedIn';
+  static String loggedIn = 'isLoggedIn';
   static String sessionId = 'sessionId';
   static String appUDID = 'appUDID';
   static String deviceToken = 'deviceToken';
@@ -55,7 +54,7 @@ class SharedPref {
   Future<bool> isLoggedIn() async {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
-    return await sharedPreferences.get(isLoogedIn) as bool? ?? false;
+    return await sharedPreferences.get(loggedIn) as bool? ?? false;
   }
 
   Future<bool> isWalkThroughVisited() async {
@@ -110,7 +109,7 @@ class SharedPref {
   // For logging out
   Future<void> deleteAll() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove(isLoogedIn);
+    await prefs.remove(loggedIn);
     await prefs.remove(appUDID);
     await prefs.remove(deviceToken);
     await prefs.remove(token);

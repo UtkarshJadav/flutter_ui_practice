@@ -1,5 +1,7 @@
+
+
 import 'package:dio/dio.dart';
-import 'package:riverpod/src/framework.dart';
+import 'package:riverpod/riverpod.dart';
 import '../../state/login_provider.dart';
 import '../common/env.dart';
 
@@ -17,7 +19,7 @@ class APIProvider {
     dioOptions.headers = {
       'Authorization': 'Bearer '+ read(authToken.state).state,
       'language': 'en',
-      'cache-control': 'no-cache' // set content-length
+      'cache-control': 'no-cache',
     };
 
     _dio = Dio(dioOptions);
@@ -52,6 +54,17 @@ class APIProvider {
         options: Options(
           contentType: 'multipart/form-data',
         ));
+    throwIfNoSuccess(response);
+    return response;
+  }
+
+  Future<Response<dynamic>> formDataQueryPostAPICall(
+      String url, dynamic data,dynamic queryParams) async {
+
+    final Response<dynamic> response = await _dio.post(url+"$queryParams",
+        data: FormData.fromMap(data as Map<String,dynamic>),
+       );
+
     throwIfNoSuccess(response);
     return response;
   }

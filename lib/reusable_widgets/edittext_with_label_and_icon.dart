@@ -3,27 +3,36 @@ import 'package:flutter/material.dart';
 import '../constants/constants.dart';
 
 class EditTextLabel extends StatelessWidget {
-  const EditTextLabel(
+   EditTextLabel(
       {Key? key,
         required this.labelName,
         required this.hintText,
-        required this.icon})
+        required this.icon,
+        required this.controller,
+         this.isEnable,
+         this.validator,
+      })
       : super(key: key);
 
   final String labelName;
   final String hintText;
+  String? Function(String?)? validator;
   final IconData? icon;
+   bool? isEnable = true;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
+      padding:  EdgeInsets.symmetric(horizontal: 22, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(labelName),
-          const SizedBox(height: 6),
-          TextField(
+           SizedBox(height: 6),
+          TextFormField(
+            enabled: isEnable,
+            controller: controller,
             cursorColor: colorNavyBlue,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             decoration: InputDecoration(
@@ -48,7 +57,15 @@ class EditTextLabel extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15),
                 borderSide: const BorderSide(color: Colors.grey),
               ),
+              errorStyle: TextStyle(
+                color: Theme.of(context).errorColor,
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(color: Theme.of(context).errorColor),
+              ),
             ),
+            validator: validator,
           ),
         ],
       ),

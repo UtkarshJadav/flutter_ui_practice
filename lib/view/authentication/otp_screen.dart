@@ -1,19 +1,26 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import '../authentication/build_profile.dart';
+import 'package:flutter_demo/state/login_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import '/../constants/constants.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-class OTPScreen extends StatefulWidget {
-  const OTPScreen({Key? key}) : super(key: key);
+import '../../utils/helpers/shared_pref_helper.dart';
+import '/../constants/constants.dart';
+import '../../main.dart';
+import '../../models/profile_response.dart';
+import '../../models/results.dart';
+import '../authentication/build_profile.dart';
+
+class OTPScreen extends ConsumerWidget {
+  String? mobileNumber;
+  String? otp;
+
+  OTPScreen({Key? key, this.mobileNumber}) : super(key: key);
 
   @override
-  State<OTPScreen> createState() => _OTPScreenState();
-}
-
-class _OTPScreenState extends State<OTPScreen> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
     return Scaffold(
       backgroundColor: colorNavyBlue,
       body: Stack(
@@ -80,10 +87,10 @@ class _OTPScreenState extends State<OTPScreen> {
                       ),
                     ),
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.fromLTRB(40, 12, 40, 8),
                     child: Text(
-                      'Enter one time password (OTP) sent to \n +91 93734 XXX',
+                      'Enter one time password (OTP) sent to \n +91 ${mobileNumber?.substring(0, 4) ?? ''} XXX',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontWeight: FontWeight.w300,
@@ -125,20 +132,39 @@ class _OTPScreenState extends State<OTPScreen> {
                         return true;
                       },
                       appContext: context,
-                      onChanged: (String value) {},
+                      onChanged: (String value) {
+                        otp = value;
+                      },
                     ),
                   ),
                   Padding(
                     padding:
-                    const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
                     child: InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const BuildProfile(),
-                          ),
-                        );
+                        ref
+                            .read(loginProvider.notifier)
+                            .verifyOtp(ref.read, '+91$mobileNumber', otp ?? '0',
+                                onSuccess: (res) {
+                          var result = Results(create: () => ProfileModel())
+                              .fromJson(jsonDecode(res.data));
+                              print(result.extraMeta?.token ?? '');
+                              print(result.data?.email ?? '');
+                              ref
+                                 .read(prefProvider)
+                                 .setToken(result.extraMeta?.token ?? '');
+                                ref
+                                 .read(prefProvider)
+                                 .setUser(jsonEncode(result.data?.toJson()) ?? '');
+                            ref.read(prefProvider)
+                              .set(SharedPref.loggedIn, true);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BuildProfile(),
+                            ),
+                          );
+                        }, onError: (error) {});
                       },
                       child: Container(
                         width: double.infinity,
