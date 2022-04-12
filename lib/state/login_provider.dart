@@ -16,6 +16,11 @@ final isLoggedIn = StateProvider<bool>((ref) {
 final authToken = StateProvider<String>((ref) {
   return '';
 });
+
+final orchardStage = StateProvider<String>((ref) {
+  return '';
+});
+
 final profilePic = StateProvider.autoDispose<XFile?>((ref) {
   return null;
 });

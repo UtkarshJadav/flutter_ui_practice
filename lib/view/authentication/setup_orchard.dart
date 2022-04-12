@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../state/login_provider.dart';
 import '/../constants/constants.dart';
 import '/../reusable_widgets/edittext_with_label_and_icon.dart';
 import '../authentication/authentication_success.dart';
 import 'google_map_screen.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class SetUpOrchardScreen extends ConsumerWidget {
   SetUpOrchardScreen({Key? key}) : super(key: key);
@@ -121,7 +123,7 @@ class SetUpOrchardScreen extends ConsumerWidget {
                         isEnable: false,
                         icon: Icons.map),
                   ),
-                  EditTextLabel(
+                  /*EditTextLabel(
                       controller: orchardStageController,
                       labelName: 'Orchard Stage',
                       hintText: 'Orchard stage',
@@ -131,7 +133,31 @@ class SetUpOrchardScreen extends ConsumerWidget {
                         }
                         return null;
                       },
-                      icon: Icons.arrow_drop_down_sharp),
+                      icon: Icons.arrow_drop_down_sharp),*/
+              DropdownButton2(
+                isExpanded: true,
+                hint: Text(
+                  'Select Item',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme
+                        .of(context)
+                        .hintColor,
+                  ),
+                ),
+                items: _addDividersAfterItems(items),
+                customItemsIndexes: _getDividersIndexes(),
+                customItemsHeight: 4,
+                value: selectedValue,
+                onChanged: (value) {
+                  ref.read(orchardStage)
+                },
+                buttonHeight: 40,
+                buttonWidth: 140,
+                itemHeight: 40,
+                itemPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+              ),
+            ),
                   EditTextLabel(
                       controller: orchardYieldController,
                       labelName: 'Orchard Yield',
